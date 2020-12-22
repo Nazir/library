@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DoctrineMigrations;
+
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+final class Version20201125144331 extends AbstractMigration
+{
+    public function getDescription() : string
+    {
+        return 'Test database';
+    }
+
+    public function up(Schema $schema) : void
+    {
+        // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE SEQUENCE author_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE book_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE TABLE author (id INT NOT NULL, book_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        //$this->addSql('ALTER TABLE IF EXISTS author ALTER COLUMN id SET DEFAULT nextval(\'author_id_seq\')');
+        $this->addSql('ALTER TABLE IF EXISTS author ADD CONSTRAINT unq_author UNIQUE (name)');
+        $this->addSql('CREATE TABLE book (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        //$this->addSql('ALTER TABLE IF EXISTS book ALTER COLUMN id SET DEFAULT nextval(\'book_id_seq\')');
+        $this->addSql('ALTER TABLE IF EXISTS book ADD CONSTRAINT unq_book UNIQUE (name)');
+        $this->addSql('ALTER TABLE author ADD CONSTRAINT fk_book_id FOREIGN KEY (book_id) REFERENCES book (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        // $this->addSql('INSERT INTO book SELECT generate_series, concat(\'Book_\', generate_series) FROM generate_series(1,10000)');
+        // $this->addSql('INSERT INTO author SELECT generate_series, generate_series, concat(\'Author_\', generate_series) FROM generate_series(1,10000)');
+        // $this->addSql('ALTER SEQUENCE author_id_seq RESTART WITH 10001');
+        // $this->addSql('ALTER SEQUENCE book_id_seq RESTART WITH 10001');
+    }
+
+    public function down(Schema $schema) : void
+    {
+        // this down() migration is auto-generated, please modify it to your needs
+        // $this->addSql('CREATE SCHEMA public');
+        $this->addSql('ALTER TABLE author DROP CONSTRAINT fk_book_id');
+        $this->addSql('DROP SEQUENCE author_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE book_id_seq CASCADE');
+        $this->addSql('DROP TABLE author');
+        $this->addSql('DROP TABLE book');
+    }
+}
